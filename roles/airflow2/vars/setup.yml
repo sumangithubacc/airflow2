@@ -1,0 +1,22 @@
+---
+# vars file for setup
+airflow_version: 2.2.3
+airflow_user: airflow
+airflow_user_id: 123
+airflow_group: airflow
+airflow_group_id: 1234
+airflow_home: /home/airflow
+airflow_export_home: /opt/airflow/airflow-home
+airflow_shell: /bin/bash
+airflow_geo: Airflow Service User
+airflow_pip_version: 20.2.4
+airflow_install_path: /opt/airflow
+airflow_version_file: '{{ airflow_install_path }}/vers'
+airflow_executable_path: /opt/airflow/airflow2/bin/airflow
+#pass: aws123
+
+directories:
+  - /var/log/airflow 
+  - /run/airflow  
+  - /opt/airflow/airflow-home  
+  - /opt/airflow/airflow-systemd

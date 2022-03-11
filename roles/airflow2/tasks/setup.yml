@@ -1,0 +1,55 @@
+---
+# tasks file for setup
+- include_vars: "setup.yml"
+- name: Airflow2 - Group Creation
+  group:
+    name: "{{ airflow_group  }}"
+    gid: "{{ airflow_group_id  }}"
+  become: true
+
+- name: Airflow2 - User Creation 
+  user:
+    name: "{{ airflow_user  }}"
+    group: "{{ airflow_group  }}"
+    system: true
+    shell: "{{ airflow_shell }}"
+    uid: "{{ airflow_user_id }}"
+    home: "{{ airflow_home }}"
+    comment: "{{ airflow_geo }}"
+    state: present 
+  become: true
+
+- name: Airflow2 -  Required Directories 
+  file:
+    path: '{{ item }}'
+    state: directory 
+    owner: airflow 
+    group: root 
+    mode: 755
+    recurse: yes
+  with_items: '{{ directories }}'
+  become: yes
+   
+- name: Airflow2 - Directory Permissions
+  file:
+    path: '{{ item  }}'
+    owner: airflow
+    group: root
+    mode: u+rwx,g+rx,o+rx
+    recurse: yes
+  with_items:
+    - /home/airflow
+    - /opt/airflow
+
+- name: Airflow2 -  Version File
+  file:
+    path: '{{ airflow_version_file }}'
+    owner: airflow
+    group: root
+    state: touch
+    mode: u+rwx,g+rx,o+rx
+  
+- name: Airflow2 - Adding Airflow Version to Version File
+  copy:
+    content: '{{ airflow_version }}'
+    dest: '{{ airflow_version_file }}'

@@ -1,0 +1,64 @@
+---
+- include_vars: "setup.yml"
+
+- name: Airflow2 - Download Installable
+  copy: src=/opt/softwares/airflow2.tar.gz dest='{{ airflow_install_path }}/' remote_src=yes
+
+- name:  Airflow2 - Setting Ownership 
+  file:
+    path: '{{ airflow_install_path }}'
+    owner: '{{ airflow_user }}'
+    group: root 
+    mode: u+rwx,g+rx,o+rx
+    recurse: yes
+
+- name: Airflow2 - Extracting
+  unarchive:
+   src: '{{ airflow_install_path }}/airflow2.tar.gz'
+   dest: '{{ airflow_install_path }}/'
+   remote_src: yes
+
+- name: Airflow2 - Copying Webserver Configurations
+  template:
+    src: webserver_config-{{ env_var }}.py.j2
+    dest: '{{ airflow_export_home }}/webserver_config.py'
+    backup: yes
+
+- name: Airflow2 - Copying Enviroment Scripts     
+  template:
+    src: enviroment.j2
+    dest: /etc/profile.d/airflow.sh
+
+- name: Airflow2 - Copying Bash Scripts 
+  template:
+    src: user-bash.j2
+    dest: '{{ airflow_home }}/.bashrc'
+
+- name: Airflow2 - Copying Airflow cfg
+  copy:
+    src: 'roles/airflow2/files/airflow-{{ env_var }}.cfg'
+    dest: '{{ airflow_export_home }}/airflow.cfg'
+    backup: yes
+
+ 
+- name: Airflow2 - Executing Environment scripts
+  script: /etc/profile.d/airflow.sh
+
+- name: Airflow2 - Ownership Permissions
+  file: 
+    path: '{{ airflow_install_path }}'
+    owner: '{{ airflow_user }}'
+    group: root
+    mode: u+rwx,g+rx,o+rx
+    recurse: yes
+- name: Airflow2 - Stopping Firewall Service 
+  service:
+    name: firewalld.service
+    state: stopped
+
+- name: Airflow2 - Init DB
+  command: '{{ airflow_executable_path }} db init'
+  environment:
+    AIRFLOW_HOME: '{{ airflow_export_home }}'
+
+

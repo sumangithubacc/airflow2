@@ -1,0 +1,18 @@
+---
+packages:    
+  - gcc
+  - gcc-c++
+  - libselinux-python
+  - zlib
+  - zlib-devel
+  - unixODBC-devel
+  - unixODBC
+  - libffi
+  - libffi-devel
+  - openssl
+  - openssl-devel
+  - python3.x86_64
+  - python3-devel.x86_64
+  - python-virtualenv.noarch
+  - python3-pip
+  - python3-setuptools

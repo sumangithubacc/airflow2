@@ -1,0 +1,35 @@
+---
+- include_vars: "prerequisites_packages.yml"
+
+- name : Airflow2 - Working on Prerequisites 
+  package : name={{ item }} state=latest
+  with_items : '{{ packages }}'
+  become : yes
+
+- name : Airflow2 - Install MSSQL DRIVER Packages
+  package : name={{ item }} state=latest
+  with_items :
+    - msodbcsql17.x86_64
+  environment :
+    ACCEPT_EULA: 'y'
+
+- name: Airflow2 - Create ODBCINST File Backup
+  copy:
+    src: /etc/odbcinst.ini
+    dest: /etc/odbcinst.ini.bk
+    mode: u+rw,g-wx,o-rwx
+
+- name : Airflow2 - Copy ODBCINST File
+  template:
+    src: odbcinst.ini.j2
+    dest: /etc/odbcinst.ini
+    mode: u+rwx,g+rx,o+rx
+
+- name: Airflow2 - Python3 is installed?
+  shell: rpm -qa|grep python3-3.
+  register: python3_installed
+
+- name: Airflow2 - Checking for python3 printing
+  debug:
+    msg: "Python3 Installed. Please check if required version is Installed."
+  when: python3_installed.rc == 0

@@ -1,0 +1,27 @@
+---
+- include_vars: "setup.yml"
+- include_vars: "airflowup.yml"
+
+- name: Airflow2 - Adding Services
+  shell: cp -r /opt/airflow/airflow-systemd/* /etc/systemd/system/
+  become: yes
+
+- name: Airflow2 - Create Airflow User
+  become: true
+  become_user: '{{ airflow_user }}'  
+  command: '{{ airflow_executable_path }} users create --username airflow1 --password {{ airflow_pass }} --firstname Airflow --lastname User --role Admin --email su.su1@g.com'
+  environment:
+    AIRFLOW_HOME: '{{ airflow_export_home }}'
+
+- name: Airflow2 - Stopping Firewall Service
+  service:
+    name: firewalld.service
+    state: stopped
+
+- name: Airflow2 - Start services 
+  systemd:
+    name: airflow-webserver.service
+    state: started
+    daemon_reload: yes
+  environment:
+    AIRFLOW_HOME: '{{ airflow_export_home }}'

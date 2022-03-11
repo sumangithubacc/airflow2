@@ -1,0 +1,7 @@
+---
+- hosts : ansible_client
+  become : true
+  vars:
+    env_var: "{{ lookup('env','AIRFLOW_ENV') }}" 
+  roles :
+    - airflow2

@@ -1,0 +1,13 @@
+---
+#- name: Airflow2 - PreReqs
+#  import_tasks: prereqs.yml
+
+#- name: Airflow2 - Setup
+#  import_tasks: setup.yml
+
+#- name: Airflow2 - Install
+#  import_tasks: install.yml
+
+- name: Airflow2 - Setup
+  import_tasks: services.yml
+
